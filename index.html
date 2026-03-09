@@ -5,96 +5,115 @@
 <title>Telegram Mini App</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-    body { font-family: Arial; text-align: center; padding: 50px; background: #f4f4f4; }
-    h1 { color: #333; }
-    .channel-btn, .shop-btn { margin: 10px; padding: 15px 25px; font-size: 16px; cursor: pointer; border: none; border-radius: 8px; }
+    /* Базовые стили */
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+    h1 { margin-top: 20px; color: #333; }
+    #userInfo { margin: 10px 0; font-size: 18px; }
+    
+    /* Вкладки */
+    .tabs { display: flex; justify-content: center; margin-top: 20px; }
+    .tab { padding: 10px 20px; cursor: pointer; background: #fff; border: 1px solid #ccc; border-bottom: none; margin-right: 2px; border-radius: 8px 8px 0 0; transition: 0.3s; }
+    .tab.active { background: #2b6cb0; color: #fff; }
+    
+    /* Контейнеры */
+    .tab-content { display: none; background: #fff; padding: 20px; width: 90%; max-width: 600px; border: 1px solid #ccc; border-radius: 0 8px 8px 8px; margin-bottom: 20px; }
+    .tab-content.active { display: block; }
+    
+    /* Кнопки каналов */
+    .channel-btn, .shop-btn { margin: 5px; padding: 12px 20px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
     .channel-btn { background-color: #2b6cb0; color: #fff; }
     .shop-btn { background-color: #38a169; color: #fff; }
-    .disabled { background-color: #ccc; cursor: not-allowed; }
+    .channel-btn:hover, .shop-btn:hover { transform: scale(1.05); }
+    .disabled { background-color: #ccc !important; cursor: not-allowed !important; transform: none; }
 </style>
 </head>
 <body>
 
 <h1>Telegram Mini App</h1>
-<p>Your Telegram ID: <span id="tgId">Loading...</span></p>
-<p>Your points: <span id="pointsDisplay">0</span></p>
+<div id="userInfo">Telegram ID: <span id="tgId">Loading...</span> | Points: <span id="pointsDisplay">0</span></div>
 
-<h2>Каналы для подписки</h2>
-<div id="channels"></div>
+<!-- Вкладки -->
+<div class="tabs">
+    <div class="tab active" data-target="channelsTab">Каналы</div>
+    <div class="tab" data-target="shopTab">Магазин</div>
+</div>
 
-<h2>Магазин очков</h2>
-<div id="shop">
+<!-- Контейнеры вкладок -->
+<div id="channelsTab" class="tab-content active"></div>
+<div id="shopTab" class="tab-content">
     <button class="shop-btn" data-points="50">Купить 50 очков</button>
     <button class="shop-btn" data-points="100">Купить 100 очков</button>
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-const userId = tg.initDataUnsafe.user.id;
-document.getElementById('tgId').innerText = userId;
+    // Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    const userId = tg.initDataUnsafe.user.id;
+    document.getElementById('tgId').innerText = userId;
 
-const API_URL = "http://localhost:5000"; // адрес вашего сервера
+    const API_URL = "http://localhost:5000"; // Адрес вашего сервера
+    let userPoints = 0;
 
-let userPoints = 0;
+    async function fetchUserPoints() {
+        const res = await fetch(`${API_URL}/getUserPoints/${userId}`);
+        const data = await res.json();
+        userPoints = data.points;
+        document.getElementById('pointsDisplay').innerText = userPoints;
+    }
 
-// --------------- Функции работы с сервером ----------------
+    async function addPoints(amount) {
+        await fetch(`${API_URL}/getPoints`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: userId, points: amount })
+        });
+        await fetchUserPoints();
+    }
 
-// Получаем очки пользователя
-async function fetchUserPoints() {
-    const res = await fetch(`${API_URL}/getUserPoints/${userId}`);
-    const data = await res.json();
-    userPoints = data.points;
-    document.getElementById('pointsDisplay').innerText = userPoints;
-}
+    // ---------------- Каналы ----------------
+    const testChannels = [];
+    for (let i = 1; i <= 30; i++) testChannels.push({ name: `Channel ${i}`, points: 10 });
 
-// Начисляем очки
-async function addPoints(amount) {
-    await fetch(`${API_URL}/getPoints`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userId, points: amount })
+    const channelsDiv = document.getElementById('channelsTab');
+    testChannels.forEach(channel => {
+        const btn = document.createElement('button');
+        btn.className = 'channel-btn';
+        btn.innerText = `${channel.name} (+${channel.points} points)`;
+        btn.addEventListener('click', async () => {
+            if (btn.classList.contains('disabled')) return;
+
+            window.open('https://t.me/somechannel', '_blank'); // замените на настоящий канал
+            await addPoints(channel.points);
+
+            btn.disabled = true;
+            btn.classList.add('disabled');
+        });
+        channelsDiv.appendChild(btn);
     });
-    await fetchUserPoints();
-}
 
-// --------------- Каналы для теста ----------------
-const testChannels = [];
-for (let i=1; i<=30; i++){
-    testChannels.push({ name: `Channel ${i}`, points: 10 });
-}
-
-const channelsDiv = document.getElementById('channels');
-
-testChannels.forEach(channel => {
-    const btn = document.createElement('button');
-    btn.className = 'channel-btn';
-    btn.innerText = `${channel.name} (+${channel.points} points)`;
-    
-    btn.addEventListener('click', async () => {
-        if (btn.classList.contains('disabled')) return;
-        // Открываем ссылку на канал (симуляция)
-        window.open('https://t.me/somechannel', '_blank');
-        // Начисляем очки только один раз
-        await addPoints(channel.points);
-        btn.disabled = true;
-        btn.classList.add('disabled');
+    // ---------------- Магазин ----------------
+    const shopButtons = document.querySelectorAll('.shop-btn');
+    shopButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const points = parseInt(btn.dataset.points);
+            await addPoints(points);
+        });
     });
-    
-    channelsDiv.appendChild(btn);
-});
 
-// --------------- Магазин ----------------
-const shopButtons = document.querySelectorAll('.shop-btn');
-shopButtons.forEach(btn => {
-    btn.addEventListener('click', async () => {
-        const points = parseInt(btn.dataset.points);
-        await addPoints(points);
+    // ---------------- Вкладки ----------------
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(tab.dataset.target).classList.add('active');
+        });
     });
-});
 
-// --------------- Инициализация ----------------
-fetchUserPoints();
-
+    // ---------------- Инициализация ----------------
+    fetchUserPoints();
 </script>
 
 </body>
