@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Channel Reward App</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <h2>Channel Rewards</h2>
+        <div id="points">0 pts</div>
+    </header>
+
+    <!-- Навигация -->
+    <div class="nav">
+        <button id="earnTab" class="tab active">Earn</button>
+        <button id="shopTab" class="tab">Shop</button>
+    </div>
+
+    <!-- Earn -->
+    <div id="earnContainer">
+        <div class="buttons">
+            <button id="findBtn">Find Channels</button>
+            <button id="addBtn">Add Channel</button>
+        </div>
+        <div id="channels" class="channels"></div>
+    </div>
+
+    <!-- Shop -->
+    <div id="shopContainer" style="display:none;">
+        <div class="shop-cards">
+            <div class="shop-card" data-points="50">
+                <div class="points">50 pts</div>
+                <div class="price">$0.99</div>
+                <button class="buy-btn">Buy</button>
+            </div>
+            <div class="shop-card" data-points="120">
+                <div class="points">120 pts</div>
+                <div class="price">$1.99</div>
+                <button class="buy-btn">Buy</button>
+            </div>
+            <div class="shop-card" data-points="300">
+                <div class="points">300 pts</div>
+                <div class="price">$4.99</div>
+                <button class="buy-btn">Buy</button>
+            </div>
+            <div class="shop-card" data-points="650">
+                <div class="points">650 pts</div>
+                <div class="price">$9.99</div>
+                <button class="buy-btn">Buy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

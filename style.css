@@ -1,0 +1,227 @@
+/* Общие стили */
+body {
+    margin: 0;
+    background: #0f0f0f;
+    color: white;
+    font-family: Arial;
+}
+
+.app {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#points {
+    background: #2a2a2a;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+/* Навигация вкладок */
+.nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #333;
+    color: white;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.tab.active {
+    background: #2ea6ff;
+}
+
+.tab:hover:not(.active) {
+    background: #555;
+}
+
+/* Блок кнопок */
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover:not(.disabled) {
+    transform: scale(1.05);
+}
+
+#findBtn {
+    background: #2ea6ff;
+    color: white;
+}
+
+#addBtn {
+    background: #333;
+    color: white;
+}
+
+/* Заблокированные кнопки */
+button.disabled {
+    background: #555 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Список каналов */
+.channels {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.channel {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.channel:hover {
+    background: #222;
+}
+
+.channel-name {
+    font-weight: bold;
+}
+
+.subscribe {
+    background: #2ea6ff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.subscribe:hover {
+    transform: scale(1.05);
+}
+
+/* Магазин */
+.shop-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.shop-card {
+    background: #1a1a1a;
+    border-radius: 15px;
+    padding: 20px;
+    width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.shop-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+}
+
+.shop-card.active {
+    transform: scale(1.08);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shop-card .points {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.shop-card .price {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.buy-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #2ea6ff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.buy-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Анимация подсветки баланса */
+#points.highlight {
+    color: #2ea6ff;
+    transform: scale(1.2);
+    transition: all 0.3s ease;
+}
+
+/* Плавающий индикатор очков */
+.floating-points {
+    position: absolute;
+    color: #2ea6ff;
+    font-weight: bold;
+    font-size: 18px;
+    pointer-events: none;
+    animation: floatUp 1s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .shop-cards {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+    .shop-card { flex: 0 0 70%; min-width: 150px; }
+    .channel { flex-direction: column; align-items: flex-start; }
+    .channel div { margin-top: 5px; }
+    button { font-size: 16px; padding: 10px; }
+}
